@@ -2,22 +2,12 @@
 #[cfg(test)]
 extern crate num_cpus;
 
-#[cfg(target_os = "linux")]
 pub fn get_core_ids() -> Option<Vec<CoreId>> {
-    linux::get_core_ids()
-}
-#[cfg(target_os = "windows")]
-pub fn get_core_ids() -> Option<Vec<CoreId>> {
-    windows::get_core_ids()
+    get_core_ids_helper()
 }
 
-#[cfg(target_os = "linux")]
 pub fn set_for_current(core_id: CoreId) {
-    linux::set_for_current(core_id);
-}
-#[cfg(target_os = "windows")]
-pub fn set_for_current(core_id: CoreId) {
-    windows::set_for_current(core_id);
+    set_for_current_helper(core_id);
 }
 
 #[derive(Copy, Clone)]
@@ -26,6 +16,18 @@ pub struct CoreId {
 }
 
 // Linux Section
+
+#[cfg(target_os = "linux")]
+#[inline]
+fn get_core_ids_helper() -> Option<Vec<CoreId>> {
+    linux::get_core_ids()
+}
+
+#[cfg(target_os = "linux")]
+#[inline]
+fn set_for_current_helper(core_id: CoreId) {
+    linux::set_for_current(core_id);
+}
 
 #[cfg(target_os = "linux")]
 extern crate libc;
@@ -152,6 +154,18 @@ mod linux {
 }
 
 // Windows Section
+
+#[cfg(target_os = "windows")]
+#[inline]
+fn get_core_ids_helper() -> Option<Vec<CoreId>> {
+    windows::get_core_ids()
+}
+
+#[cfg(target_os = "windows")]
+#[inline]
+fn set_for_current_helper(core_id: CoreId) {
+    windows::set_for_current(core_id);
+}
 
 #[cfg(target_os = "windows")]
 extern crate winapi;
