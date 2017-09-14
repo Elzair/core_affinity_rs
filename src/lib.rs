@@ -2,14 +2,23 @@
 #[cfg(test)]
 extern crate num_cpus;
 
+/// This function tries to retrieve information
+/// on all the "cores" active on this system.
 pub fn get_core_ids() -> Option<Vec<CoreId>> {
     get_core_ids_helper()
 }
 
+/// This function tries to pin the current
+/// thread to the specified core.
+///
+/// # Arguments
+///
+/// * core_id - ID of the core to pin
 pub fn set_for_current(core_id: CoreId) {
     set_for_current_helper(core_id);
 }
 
+/// This represents a CPU core.
 #[derive(Copy, Clone)]
 pub struct CoreId {
     id: usize,
