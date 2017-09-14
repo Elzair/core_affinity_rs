@@ -2,14 +2,22 @@
 #[cfg(test)]
 extern crate num_cpus;
 
+#[cfg(target_os = "linux")]
 pub fn get_core_ids() -> Option<Vec<CoreId>> {
-    #[cfg(target_os = "linux")]
     linux::get_core_ids()
 }
+#[cfg(target_os = "windows")]
+pub fn get_core_ids() -> Option<Vec<CoreId>> {
+    windows::get_core_ids()
+}
 
+#[cfg(target_os = "linux")]
 pub fn set_for_current(core_id: CoreId) {
-    #[cfg(target_os = "linux")]
     linux::set_for_current(core_id);
+}
+#[cfg(target_os = "windows")]
+pub fn set_for_current(core_id: CoreId) {
+    windows::set_for_current(core_id);
 }
 
 #[derive(Copy, Clone)]
