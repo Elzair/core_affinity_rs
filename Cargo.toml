@@ -1,0 +1,12 @@
+[package]
+name = "core_affinity"
+version = "0.1.0"
+authors = ["Philip Woods <elzairthesorcerer@gmail.com>"]
+
+[dependencies]
+
+[target.'cfg(target_os = "linux")'.dependencies]
+libc = "^0.2.30"
+
+[dev-dependencies]
+num_cpus = "1.6.2"
