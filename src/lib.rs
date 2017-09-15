@@ -26,6 +26,7 @@
 /// }
 /// ```
 
+#[cfg(test)]
 extern crate num_cpus;
 
 /// This function tries to retrieve information
@@ -269,6 +270,17 @@ mod windows {
     }
 }
 
+// Other section
+#[cfg(not(any(target_os = "linux", target_os = "windows")))]
+#[inline]
+fn get_core_ids_helper() -> Option<Vec<CoreId>> {
+    None
+}
+
+#[cfg(not(any(target_os = "linux", target_os = "windows")))]
+#[inline]
+fn set_for_current_helper(core_id: CoreId) {
+}
 
 #[cfg(test)]
 mod tests {
