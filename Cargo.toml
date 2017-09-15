@@ -1,15 +1,13 @@
 [package]
 name = "core_affinity"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Philip Woods <elzairthesorcerer@gmail.com>"]
 
 [dependencies]
+num_cpus = "1.6.2"
 
 [target.'cfg(target_os = "linux")'.dependencies]
-libc = "^0.2.30"
+libc = "0.2.30"
 
 [target.'cfg(target_os = "windows")'.dependencies]
-winapi = "^0.2.8"
-
-[dev-dependencies]
-num_cpus = "1.6.2"
+winapi = "0.2.8"
