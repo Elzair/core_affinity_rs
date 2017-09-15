@@ -1,6 +1,6 @@
 [package]
 name = "core_affinity"
-version = "0.4.0"
+version = "0.4.1"
 authors = ["Philip Woods <elzairthesorcerer@gmail.com>"]
 description = "Manages CPU affinities"
 readme = "README.md"
@@ -9,7 +9,7 @@ documentation = "https://docs.rs/core_affinity/"
 homepage = "https://github.com/Elzair/core_affinity_rs"
 repository = "https://github.com/Elzair/core_affinity_rs"
 keywords = ["affinity", "thread-affinity", "cpu"]
-categories = ["hardware-support", "operating-systems"]
+categories = ["hardware-support", "os"]
 
 [dependencies]
 
