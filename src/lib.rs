@@ -205,14 +205,14 @@ fn set_for_current_helper(core_id: CoreId) {
 #[cfg(target_os = "windows")]
 extern crate winapi;
 #[cfg(target_os = "windows")]
-extern crate kernel32_sys as k32;
+extern crate kernel32;
 
 #[cfg(target_os = "windows")]
 mod windows {
     use std::mem;
 
     use winapi::basetsd::{DWORD_PTR, PDWORD_PTR};
-    use k32::{GetCurrentProcess, GetCurrentThread, GetProcessAffinityMask, SetThreadAffinityMask};
+    use kernel32::{GetCurrentProcess, GetCurrentThread, GetProcessAffinityMask, SetThreadAffinityMask};
 
     use super::CoreId;
     
