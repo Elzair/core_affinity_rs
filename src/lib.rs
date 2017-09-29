@@ -324,6 +324,7 @@ mod macos {
     type kern_return_t = c_int;
     type integer_t = c_int;
     type natural_t = c_uint;
+    type thread_t = c_uint;
     type thread_policy_flavor_t = natural_t;
     type mach_msg_type_number_t = natural_t;
 
@@ -340,7 +341,7 @@ mod macos {
     #[link(name = "System", kind = "framework")]
     extern {
         fn thread_policy_set(
-            thread: *mut c_void,
+            thread: thread_t,
             flavor: thread_policy_flavor_t,
             policy_info: thread_policy_t,
             count: mach_msg_type_number_t,
@@ -354,15 +355,15 @@ mod macos {
     }
 
     pub fn set_for_current(core_id: CoreId) {
-        let info = thread_affinity_policy_data_t {
+        let mut info = thread_affinity_policy_data_t {
             affinity_tag: core_id.id as integer_t,
         };
         
         unsafe {
             thread_policy_set(
-                pthread_self(),
+                pthread_self() as thread_t,
                 THREAD_AFFINITY_POLICY,
-                &info as thread_policy_t,
+                &mut info as thread_policy_t,
                 THREAD_AFFINITY_POLICY_COUNT
             );
         }
