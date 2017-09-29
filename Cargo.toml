@@ -1,6 +1,6 @@
 [package]
 name = "core_affinity"
-version = "0.5.4"
+version = "0.5.5"
 authors = ["Philip Woods <elzairthesorcerer@gmail.com>"]
 description = "Manages CPU affinities"
 readme = "README.md"

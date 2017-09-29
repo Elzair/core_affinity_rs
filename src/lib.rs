@@ -209,8 +209,6 @@ extern crate kernel32;
 
 #[cfg(target_os = "windows")]
 mod windows {
-    use std::mem;
-
     use winapi::basetsd::{DWORD_PTR, PDWORD_PTR};
     use kernel32::{GetCurrentProcess, GetCurrentThread, GetProcessAffinityMask, SetThreadAffinityMask};
 
@@ -241,12 +239,12 @@ mod windows {
         let mask: u64 = 1 << core_id.id;
 
         // Set core affinity for current thread.
-        let res = unsafe {
+        unsafe {
             SetThreadAffinityMask(
                 GetCurrentThread(),
                 mask as DWORD_PTR
-            )
-        };
+            );
+        }
     }
 
     fn get_affinity_mask() -> Option<u64> {
@@ -376,7 +374,7 @@ mod macos {
         use super::*;
         
         #[test]
-        fn test_macos_get_core_ids() {
+        fn test_windows_get_core_ids() {
             match get_core_ids() {
                 Some(set) => {
                     assert_eq!(set.len(), num_cpus::get());
@@ -386,7 +384,7 @@ mod macos {
         }
         
         #[test]
-        fn test_macos_set_for_current() {
+        fn test_windows_set_for_current() {
             let ids = get_core_ids().unwrap();
 
             assert!(ids.len() > 0);
