@@ -29,6 +29,7 @@
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 extern crate libc;
 
+#[cfg_attr(all(not(test), not(target_os = "macos")), allow(unused_extern_crates))]
 extern crate num_cpus;
 
 /// This function tries to retrieve information
@@ -311,14 +312,14 @@ fn set_for_current_helper(core_id: CoreId) {
 }
 
 #[cfg(target_os = "macos")]
-extern crate libc;
-
-#[cfg(target_os = "macos")]
 mod macos {
-    use super::CoreId;
-
     use std::mem;
+
     use libc::{c_int, c_uint, c_void, pthread_self};
+
+    use num_cpus;
+
+    use super::CoreId;
 
     type kern_return_t = c_int;
     type integer_t = c_int;
@@ -334,7 +335,7 @@ mod macos {
     type thread_policy_t = *mut thread_affinity_policy_data_t;
 
     const THREAD_AFFINITY_POLICY: thread_policy_flavor_t = 4;
-    const THREAD_AFFINITY_POLICY_COUNT: mach_msg_type_number_t = mem::size_of::<thread_affinity_policy_data_t>() / mem::size_of::<integer_t>();
+    const THREAD_AFFINITY_POLICY_COUNT: mach_msg_type_number_t = mem::size_of::<thread_affinity_policy_data_t>() as mach_msg_type_number_t / mem::size_of::<integer_t>() as mach_msg_type_number_t;
 
     #[link(name = "System", kind = "framework")]
     extern {
@@ -394,7 +395,8 @@ mod macos {
     }
 }
 
-// Other section
+// Stub Section
+
 #[cfg(not(any(target_os = "linux", target_os = "windows", target_os = "macos")))]
 #[inline]
 fn get_core_ids_helper() -> Option<Vec<CoreId>> {
