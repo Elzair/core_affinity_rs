@@ -8,8 +8,8 @@ license = "MIT/Apache-2.0"
 documentation = "https://docs.rs/core_affinity/"
 homepage = "https://github.com/Elzair/core_affinity_rs"
 repository = "https://github.com/Elzair/core_affinity_rs"
-keywords = ["affinity", "thread-affinity", "cpu"]
-categories = ["hardware-support", "os"]
+keywords = ["affinity", "thread-affinity", "cpu", "core"]
+categories = ["os"]
 
 [dependencies]
 num_cpus = "^1.6.2"
