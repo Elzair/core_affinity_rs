@@ -354,7 +354,9 @@ mod macos {
     }
 
     pub fn set_for_current(core_id: CoreId) {
-        let THREAD_AFFINITY_POLICY_COUNT: mach_msg_type_number_t = mem::size_of::<thread_affinity_policy_data_t>() as mach_msg_type_number_t / mem::size_of::<integer_t>() as mach_msg_type_number_t;
+        let THREAD_AFFINITY_POLICY_COUNT: mach_msg_type_number_t =
+            mem::size_of::<thread_affinity_policy_data_t>() as mach_msg_type_number_t /
+            mem::size_of::<integer_t>() as mach_msg_type_number_t;
 
         let mut info = thread_affinity_policy_data_t {
             affinity_tag: core_id.id as integer_t,
