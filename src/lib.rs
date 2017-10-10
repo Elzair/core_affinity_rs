@@ -251,11 +251,11 @@ mod windows {
     fn get_affinity_mask() -> Option<u64> {
         #[cfg(target_pointer_width = "64")]
         let mut process_mask: u64 = 0;
-        #[cfg(target_pointer_width = "64")]
+        #[cfg(target_pointer_width = "32")]
         let mut process_mask: u32 = 0;
         #[cfg(target_pointer_width = "64")]
         let mut system_mask: u64 = 0;
-        #[cfg(target_pointer_width = "64")]
+        #[cfg(target_pointer_width = "32")]
         let mut system_mask: u32 = 0;
 
         let res = unsafe {
