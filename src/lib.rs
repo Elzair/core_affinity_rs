@@ -237,7 +237,7 @@ mod windows {
 
     pub fn set_for_current(core_id: CoreId) {
         // Convert `CoreId` back into mask.
-        let mask: u64 = 1 << core_id.id;
+        let mask: usize = 1 << core_id.id;
 
         // Set core affinity for current thread.
         unsafe {
@@ -249,8 +249,8 @@ mod windows {
     }
 
     fn get_affinity_mask() -> Option<u64> {
-        let mut process_mask: u64 = 0;
-        let mut system_mask: u64 = 0;
+        let mut process_mask: usize = 0;
+        let mut system_mask: usize = 0;
 
         let res = unsafe {
             GetProcessAffinityMask(
