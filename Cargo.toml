@@ -14,7 +14,7 @@ categories = ["os"]
 [dependencies]
 num_cpus = "^1.6.2"
 
-[target.'cfg(any(target_os = "linux", target_os = "macos"))'.dependencies]
+[target.'cfg(any(target_os = "android", target_os = "linux", target_os = "macos"))'.dependencies]
 libc = "^0.2.30"
 
 [target.'cfg(target_os = "windows")'.dependencies]
