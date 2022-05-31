@@ -1,17 +1,17 @@
 //! This crate manages CPU affinities.
-//! 
+//!
 //! ## Example
-//! 
-//! This example shows how create a thread for each available processor and pin each thread to its corresponding processor. 
-//! 
+//!
+//! This example shows how create a thread for each available processor and pin each thread to its corresponding processor.
+//!
 //! ```
 //! extern crate core_affinity;
-//! 
+//!
 //! use std::thread;
-//! 
+//!
 //! // Retrieve the IDs of all active CPU cores.
 //! let core_ids = core_affinity::get_core_ids().unwrap();
-//! 
+//!
 //! // Create a thread for each active CPU core.
 //! let handles = core_ids.into_iter().map(|id| {
 //!     thread::spawn(move || {
@@ -20,13 +20,13 @@
 //!         // Do more work after this.
 //!     })
 //! }).collect::<Vec<_>>();
-//! 
+//!
 //! for handle in handles.into_iter() {
 //!     handle.join().unwrap();
 //! }
 //! ```
 
-#[cfg(any(target_os = "linux", target_os = "macos"))]
+#[cfg(any(target_os = "android", target_os = "linux", target_os = "macos"))]
 extern crate libc;
 
 #[cfg_attr(all(not(test), not(target_os = "macos")), allow(unused_extern_crates))]
@@ -56,26 +56,26 @@ pub struct CoreId {
 
 // Linux Section
 
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "android", target_os = "linux"))]
 #[inline]
 fn get_core_ids_helper() -> Option<Vec<CoreId>> {
     linux::get_core_ids()
 }
 
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "android", target_os = "linux"))]
 #[inline]
 fn set_for_current_helper(core_id: CoreId) {
     linux::set_for_current(core_id);
 }
 
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "android", target_os = "linux"))]
 mod linux {
     use std::mem;
 
     use libc::{CPU_ISSET, CPU_SET, CPU_SETSIZE, cpu_set_t, sched_getaffinity, sched_setaffinity};
 
     use super::CoreId;
-    
+
     pub fn get_core_ids() -> Option<Vec<CoreId>> {
         if let Some(full_set) = get_affinity_mask() {
             let mut core_ids: Vec<CoreId> = Vec::new();
@@ -133,9 +133,9 @@ mod linux {
     #[cfg(test)]
     mod tests {
         use num_cpus;
-        
+
         use super::*;
-        
+
         #[test]
         fn test_linux_get_affinity_mask() {
             match get_affinity_mask() {
@@ -143,7 +143,7 @@ mod linux {
                 None => { assert!(false); },
             }
         }
-        
+
         #[test]
         fn test_linux_get_core_ids() {
             match get_core_ids() {
@@ -153,7 +153,7 @@ mod linux {
                 None => { assert!(false); },
             }
         }
-        
+
         #[test]
         fn test_linux_set_for_current() {
             let ids = get_core_ids().unwrap();
@@ -214,7 +214,7 @@ mod windows {
     use kernel32::{GetCurrentProcess, GetCurrentThread, GetProcessAffinityMask, SetThreadAffinityMask};
 
     use super::CoreId;
-    
+
     pub fn get_core_ids() -> Option<Vec<CoreId>> {
         if let Some(mask) = get_affinity_mask() {
             // Find all active cores in the bitmask.
@@ -279,9 +279,9 @@ mod windows {
     #[cfg(test)]
     mod tests {
         use num_cpus;
-        
+
         use super::*;
-        
+
         #[test]
         fn test_macos_get_core_ids() {
             match get_core_ids() {
@@ -291,7 +291,7 @@ mod windows {
                 None => { assert!(false); },
             }
         }
-        
+
         #[test]
         fn test_macos_set_for_current() {
             let ids = get_core_ids().unwrap();
@@ -367,7 +367,7 @@ mod macos {
         let mut info = thread_affinity_policy_data_t {
             affinity_tag: core_id.id as integer_t,
         };
-        
+
         unsafe {
             thread_policy_set(
                 pthread_self() as thread_t,
@@ -381,9 +381,9 @@ mod macos {
     #[cfg(test)]
     mod tests {
         use num_cpus;
-        
+
         use super::*;
-        
+
         #[test]
         fn test_windows_get_core_ids() {
             match get_core_ids() {
@@ -393,7 +393,7 @@ mod macos {
                 None => { assert!(false); },
             }
         }
-        
+
         #[test]
         fn test_windows_set_for_current() {
             let ids = get_core_ids().unwrap();
@@ -407,13 +407,13 @@ mod macos {
 
 // Stub Section
 
-#[cfg(not(any(target_os = "linux", target_os = "windows", target_os = "macos")))]
+#[cfg(not(any(target_os = "linux", target_os = "android", target_os = "windows", target_os = "macos")))]
 #[inline]
 fn get_core_ids_helper() -> Option<Vec<CoreId>> {
     None
 }
 
-#[cfg(not(any(target_os = "linux", target_os = "windows", target_os = "macos")))]
+#[cfg(not(any(target_os = "linux", target_os = "android", target_os = "windows", target_os = "macos")))]
 #[inline]
 fn set_for_current_helper(core_id: CoreId) {
 }
@@ -421,7 +421,7 @@ fn set_for_current_helper(core_id: CoreId) {
 #[cfg(test)]
 mod tests {
     use num_cpus;
-    
+
     use super::*;
 
     // #[test]
@@ -429,7 +429,7 @@ mod tests {
     //     println!("Num CPUs: {}", num_cpus::get());
     //     println!("Num Physical CPUs: {}", num_cpus::get_physical());
     // }
-    
+
     #[test]
     fn test_get_core_ids() {
         match get_core_ids() {
