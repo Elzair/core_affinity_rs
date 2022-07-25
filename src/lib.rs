@@ -205,15 +205,13 @@ fn set_for_current_helper(core_id: CoreId) {
 
 #[cfg(target_os = "windows")]
 extern crate winapi;
-#[cfg(target_os = "windows")]
-extern crate kernel32;
 
 #[cfg(target_os = "windows")]
 mod windows {
-    use winapi::basetsd::{DWORD_PTR, PDWORD_PTR};
-    use kernel32::{GetCurrentProcess, GetCurrentThread, GetProcessAffinityMask, SetThreadAffinityMask};
-
     use super::CoreId;
+    use winapi::um::winbase::{SetThreadAffinityMask, GetProcessAffinityMask};
+    use winapi::um::processthreadsapi::{GetCurrentThread, GetCurrentProcess};
+    use winapi::shared::basetsd::{DWORD_PTR, PDWORD_PTR};
 
     pub fn get_core_ids() -> Option<Vec<CoreId>> {
         if let Some(mask) = get_affinity_mask() {
@@ -261,8 +259,8 @@ mod windows {
         let res = unsafe {
             GetProcessAffinityMask(
                 GetCurrentProcess(),
-                &mut process_mask as PDWORD_PTR,
-                &mut system_mask as PDWORD_PTR
+                &mut process_mask as *const _ as PDWORD_PTR,
+                &mut system_mask as *const _ as PDWORD_PTR
             )
         };
 
