@@ -21,8 +21,10 @@ let core_ids = core_affinity::get_core_ids().unwrap();
 let handles = core_ids.into_iter().map(|id| {
     thread::spawn(move || {
         // Pin this thread to a single CPU core.
-        core_affinity::set_for_current(id);
-        // Do more work after this.
+        let res = core_affinity::set_for_current(id);
+        if (res) {
+          // Do more work after this.
+        }
     })
 }).collect::<Vec<_>>();
 
