@@ -2,7 +2,7 @@
 //!
 //! ## Example
 //!
-//! This example shows how create a thread for each available processor and pin each thread to its corresponding processor.
+//! This example shows how to create a thread for each available processor and pin each thread to its corresponding processor.
 //!
 //! ```
 //! extern crate core_affinity;
@@ -49,7 +49,7 @@ pub fn set_for_current(core_id: CoreId) {
 }
 
 /// This represents a CPU core.
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct CoreId {
     pub id: usize,
 }
