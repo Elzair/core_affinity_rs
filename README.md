@@ -14,7 +14,10 @@ extern crate core_affinity;
 
 use std::thread;
 
-// Retrieve the IDs of all active CPU cores.
+// Retrieve the IDs of all cores on which the current
+// thread is allowed to run.
+// NOTE: If you want ALL the possible cores, you should
+// use num_cpus.
 let core_ids = core_affinity::get_core_ids().unwrap();
 
 // Create a thread for each active CPU core.

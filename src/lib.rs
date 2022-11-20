@@ -35,7 +35,8 @@ extern crate libc;
 extern crate num_cpus;
 
 /// This function tries to retrieve information
-/// on all the "cores" active on this system.
+/// on all the "cores" on which the current thread 
+/// is allowed to run.
 pub fn get_core_ids() -> Option<Vec<CoreId>> {
     get_core_ids_helper()
 }
