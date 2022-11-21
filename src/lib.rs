@@ -320,7 +320,7 @@ fn get_core_ids_helper() -> Option<Vec<CoreId>> {
 #[cfg(target_os = "macos")]
 #[inline]
 fn set_for_current_helper(core_id: CoreId) -> bool {
-    macos::set_for_current(core_id);
+    macos::set_for_current(core_id)
 }
 
 #[cfg(target_os = "macos")]
