@@ -415,7 +415,8 @@ fn get_core_ids_helper() -> Option<Vec<CoreId>> {
 
 #[cfg(not(any(target_os = "linux", target_os = "android", target_os = "windows", target_os = "macos")))]
 #[inline]
-fn set_for_current_helper(core_id: CoreId) {
+fn set_for_current_helper(core_id: CoreId) -> bool {
+    false
 }
 
 #[cfg(test)]
