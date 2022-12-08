@@ -342,7 +342,6 @@ mod macos {
 
     const THREAD_AFFINITY_POLICY: thread_policy_flavor_t = 4;
 
-    #[link(name = "System", kind = "framework")]
     extern {
         fn thread_policy_set(
             thread: thread_t,
