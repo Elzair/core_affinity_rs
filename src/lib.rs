@@ -584,7 +584,7 @@ fn get_core_ids_helper() -> Option<Vec<CoreId>> {
 )))]
 #[inline]
 fn set_for_current_helper(_core_id: CoreId) -> bool {
-    true
+    false
 }
 
 #[cfg(test)]
