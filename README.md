@@ -38,7 +38,7 @@ for handle in handles.into_iter() {
 
 # Platforms
 
-`core_affinity_rs` should work on Linux, Windows, Mac OSX, and Android.
+`core_affinity_rs` should work on Linux, Windows, Mac OSX, FreeBSD, and Android.
 
 `core_affinity_rs` is continuously tested on:
   * `x86_64-unknown-linux-gnu` (Linux)
