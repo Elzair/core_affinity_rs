@@ -57,7 +57,8 @@ pub fn set_for_current(core_id: CoreId) -> bool {
 }
 
 /// This represents a CPU core.
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[repr(transparent)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct CoreId {
     pub id: usize,
 }
