@@ -401,10 +401,8 @@ mod macos {
         #[test]
         fn test_macos_set_for_current() {
             let ids = get_core_ids().unwrap();
-
             assert!(ids.len() > 0);
-
-            set_for_current(ids[0]);
+            assert!(set_for_current(ids[0]))
         }
     }
 }
@@ -611,9 +609,7 @@ mod tests {
     #[test]
     fn test_set_for_current() {
         let ids = get_core_ids().unwrap();
-
         assert!(ids.len() > 0);
-
-        set_for_current(ids[0]);
+        assert!(set_for_current(ids[0]))
     }
 }
