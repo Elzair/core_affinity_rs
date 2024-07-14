@@ -32,7 +32,8 @@
     target_os = "android",
     target_os = "linux",
     target_os = "macos",
-    target_os = "freebsd"
+    target_os = "freebsd",
+    target_os = "netbsd"
 ))]
 extern crate libc;
 
@@ -559,6 +560,125 @@ mod freebsd {
     }
 }
 
+// NetBSD Section
+
+#[cfg(target_os = "netbsd")]
+#[inline]
+fn get_core_ids_helper() -> Option<Vec<CoreId>> {
+    netbsd::get_core_ids()
+}
+
+#[cfg(target_os = "netbsd")]
+#[inline]
+fn set_for_current_helper(core_id: CoreId) -> bool {
+    netbsd::set_for_current(core_id)
+}
+
+#[cfg(target_os = "netbsd")]
+mod netbsd {
+    use libc::{
+        pthread_getaffinity_np, pthread_setaffinity_np, pthread_self, cpuset_t,
+        _cpuset_create, _cpuset_size, _cpuset_set, _cpuset_isset, _cpuset_destroy
+    };
+
+    use super::CoreId;
+
+    pub fn get_core_ids() -> Option<Vec<CoreId>> {
+        if let Some(full_set) = get_affinity_mask() {
+            let mut core_ids: Vec<CoreId> = Vec::new();
+
+            let sz = unsafe { _cpuset_size(full_set) };
+            for i in 0..sz {
+                if unsafe { _cpuset_isset(i as u64, full_set) } >= 0 {
+                    core_ids.push(CoreId { id: i });
+                }
+            }
+            unsafe { _cpuset_destroy(full_set) };
+            Some(core_ids)
+        } else {
+            None
+        }
+    }
+
+    pub fn set_for_current(core_id: CoreId) -> bool {
+        let set = unsafe { _cpuset_create() };
+        unsafe { _cpuset_set(core_id.id as u64, set) } ;
+
+        let result = unsafe {
+            pthread_setaffinity_np(pthread_self(), _cpuset_size(set), set)
+        };
+        unsafe { _cpuset_destroy(set) };
+
+        match result {
+            0 => true,
+            _ => false,
+        }
+    }
+
+    fn get_affinity_mask() -> Option<*mut cpuset_t> {
+        let set = unsafe { _cpuset_create() };
+
+        match unsafe {
+            pthread_getaffinity_np(pthread_self(), _cpuset_size(set), set)
+        } {
+            0 => Some(set),
+            _ => None,
+        }
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use num_cpus;
+
+        use super::*;
+
+        #[test]
+        fn test_netbsd_get_affinity_mask() {
+            match get_affinity_mask() {
+                Some(set) => unsafe { _cpuset_destroy(set); },
+                None => {
+                    assert!(false);
+                }
+            }
+        }
+
+        #[test]
+        fn test_netbsd_get_core_ids() {
+            match get_core_ids() {
+                Some(set) => {
+                    assert_eq!(set.len(), num_cpus::get());
+                }
+                None => {
+                    assert!(false);
+                }
+            }
+        }
+
+        #[test]
+        fn test_netbsd_set_for_current() {
+            let ids = get_core_ids().unwrap();
+
+            assert!(ids.len() > 0);
+
+            let ci = ids[ids.len() - 1]; // use the last reported core
+            let res = set_for_current(ci);
+            assert_eq!(res, true);
+
+            // Ensure that the system pinned the current thread
+            // to the specified core.
+            let new_mask = get_affinity_mask().unwrap();
+            assert!(unsafe { _cpuset_isset(ci.id as u64, new_mask) > 0 });
+            let sz = unsafe { _cpuset_size(new_mask) };
+            for i in 0..sz {
+                if i != ci.id {
+                    assert_eq!(0, unsafe { _cpuset_isset(i as u64, new_mask) });
+                }
+            }
+            unsafe { _cpuset_destroy(new_mask) };
+        }
+    }
+}
+
 // Stub Section
 
 #[cfg(not(any(
@@ -566,7 +686,8 @@ mod freebsd {
     target_os = "android",
     target_os = "windows",
     target_os = "macos",
-    target_os = "freebsd"
+    target_os = "freebsd",
+    target_os = "netbsd"
 )))]
 #[inline]
 fn get_core_ids_helper() -> Option<Vec<CoreId>> {
@@ -578,7 +699,8 @@ fn get_core_ids_helper() -> Option<Vec<CoreId>> {
     target_os = "android",
     target_os = "windows",
     target_os = "macos",
-    target_os = "freebsd"
+    target_os = "freebsd",
+    target_os = "netbsd"
 )))]
 #[inline]
 fn set_for_current_helper(_core_id: CoreId) -> bool {
