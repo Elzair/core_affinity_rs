@@ -580,6 +580,7 @@ mod netbsd {
         pthread_getaffinity_np, pthread_setaffinity_np, pthread_self, cpuset_t,
         _cpuset_create, _cpuset_size, _cpuset_set, _cpuset_isset, _cpuset_destroy
     };
+    use num_cpus;
 
     use super::CoreId;
 
@@ -587,8 +588,8 @@ mod netbsd {
         if let Some(full_set) = get_affinity_mask() {
             let mut core_ids: Vec<CoreId> = Vec::new();
 
-            let sz = unsafe { _cpuset_size(full_set) };
-            for i in 0..sz {
+            let num_cpus = num_cpus::get();
+            for i in 0..num_cpus {
                 if unsafe { _cpuset_isset(i as u64, full_set) } >= 0 {
                     core_ids.push(CoreId { id: i });
                 }
@@ -668,8 +669,8 @@ mod netbsd {
             // to the specified core.
             let new_mask = get_affinity_mask().unwrap();
             assert!(unsafe { _cpuset_isset(ci.id as u64, new_mask) > 0 });
-            let sz = unsafe { _cpuset_size(new_mask) };
-            for i in 0..sz {
+            let num_cpus = num_cpus::get();
+            for i in 0..num_cpus {
                 if i != ci.id {
                     assert_eq!(0, unsafe { _cpuset_isset(i as u64, new_mask) });
                 }
